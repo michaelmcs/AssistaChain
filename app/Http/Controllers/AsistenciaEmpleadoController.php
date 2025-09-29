@@ -1,14 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\AsistenciaEmpleado;
 use App\Models\Empleado;
 use App\Models\Configuracion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-
 class AsistenciaEmpleadoController extends Controller
 {
     public function create()
@@ -27,7 +24,6 @@ class AsistenciaEmpleadoController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-
         try {
             $empleado = Empleado::where('id_rfid', $request->rfid)->first();
 
@@ -62,7 +58,6 @@ class AsistenciaEmpleadoController extends Controller
                         $asistenciaHoy->fecha->format('H:i:s'))
                     ->withInput();
             }
-
             $prevHash = Configuracion::where('parametro', 'last_block_hash')->value('valor') ?? 'GENESIS';
             $timestamp = now()->timestamp;
             
@@ -74,7 +69,6 @@ class AsistenciaEmpleadoController extends Controller
                 $prevHash .
                 uniqid()
             );
-
             $asistencia = AsistenciaEmpleado::create([
                 'id_empleado' => $empleado->id,
                 'estado' => 'presente',
@@ -83,12 +77,10 @@ class AsistenciaEmpleadoController extends Controller
                 'fecha' => now(),
                 'tipo_registro' => 'manual'
             ]);
-
             Configuracion::updateOrCreate(
                 ['parametro' => 'last_block_hash'],
                 ['valor' => $hashBlockchain]
             );
-
             Log::info('Asistencia registrada con blockchain', [
                 'empleado' => $empleado->nombre,
                 'rfid' => $empleado->id_rfid,
@@ -107,7 +99,6 @@ class AsistenciaEmpleadoController extends Controller
                 ->withInput();
         }
     }
-
     public function index()
     {
         try {
@@ -121,7 +112,6 @@ class AsistenciaEmpleadoController extends Controller
             return redirect()->back()->with('error', 'Error al cargar las asistencias');
         }
     }
-
     public function show($id)
     {
         try {
@@ -142,7 +132,6 @@ class AsistenciaEmpleadoController extends Controller
                 ->with('error', 'Error al cargar las asistencias del empleado');
         }
     }
-
     public function marcarAusentesAutomaticamente()
     {
         try {
@@ -167,7 +156,6 @@ class AsistenciaEmpleadoController extends Controller
                         $prevHash .
                         uniqid()
                     );
-
                     AsistenciaEmpleado::create([
                         'id_empleado' => $empleado->id,
                         'estado' => 'ausente',
@@ -182,7 +170,6 @@ class AsistenciaEmpleadoController extends Controller
                     Log::info('Empleado marcado como ausente: ' . $empleado->nombre);
                 }
             }
-
             if ($contador > 0) {
                 Configuracion::updateOrCreate(
                     ['parametro' => 'last_block_hash'],
@@ -194,23 +181,19 @@ class AsistenciaEmpleadoController extends Controller
                 'message' => 'Ausentes marcados: ' . $contador,
                 'ausentes' => $contador
             ]);
-
         } catch (\Exception $e) {
             Log::error('Error al marcar ausentes: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
     public function marcarAusenteManualmente($empleadoId)
     {
         try {
             $empleado = Empleado::findOrFail($empleadoId);
             $hoy = now()->toDateString();
-
             $asistenciaHoy = AsistenciaEmpleado::where('id_empleado', $empleado->id)
                 ->whereDate('fecha', $hoy)
                 ->first();
-
             if ($asistenciaHoy) {
                 if ($asistenciaHoy->estado === 'ausente') {
                     return redirect()->back()
@@ -221,11 +204,9 @@ class AsistenciaEmpleadoController extends Controller
                     'estado' => 'ausente',
                     'tipo_registro' => 'manual'
                 ]);
-
                 return redirect()->back()
                     ->with('success', $empleado->nombre . ' cambiado a ausente');
             }
-
             $prevHash = Configuracion::where('parametro', 'last_block_hash')->value('valor') ?? 'GENESIS';
             $timestamp = now()->timestamp;
             
@@ -237,7 +218,6 @@ class AsistenciaEmpleadoController extends Controller
                 $prevHash .
                 uniqid()
             );
-
             AsistenciaEmpleado::create([
                 'id_empleado' => $empleado->id,
                 'estado' => 'ausente',
@@ -246,12 +226,10 @@ class AsistenciaEmpleadoController extends Controller
                 'fecha' => now(),
                 'tipo_registro' => 'manual'
             ]);
-
             Configuracion::updateOrCreate(
                 ['parametro' => 'last_block_hash'],
                 ['valor' => $hashBlockchain]
             );
-
             return redirect()->back()
                 ->with('success', $empleado->nombre . ' marcado como ausente');
 

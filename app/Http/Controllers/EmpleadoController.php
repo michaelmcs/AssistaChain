@@ -12,18 +12,12 @@ use Carbon\Carbon;
 
 class EmpleadoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+   
     public function index()
     {
         try {
             $empleados = Empleado::orderBy('id', 'desc')->get();
-            
-            // Calcular el siguiente RFID disponible
             $siguienteRFID = $this->calcularSiguienteRFID();
-            
-            // Estadísticas generales - USANDO EL CAMPO 'fecha' EN LUGAR DE 'created_at'
             $totalEmpleados = $empleados->count();
             $totalAsistenciasHoy = AsistenciaEmpleado::whereDate('fecha', Carbon::today())->count();
             
@@ -33,10 +27,6 @@ class EmpleadoController extends Controller
             return redirect()->back()->with('error', 'Error al cargar la lista de empleados: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Método para calcular el siguiente RFID disponible
-     */
     private function calcularSiguienteRFID()
     {
         try {
@@ -46,7 +36,7 @@ class EmpleadoController extends Controller
                 return 'RFID001'; // Primer empleado
             }
             
-            // Extraer el número del último RFID
+ 
             preg_match('/RFID(\d+)/', $ultimoEmpleado->id_rfid, $matches);
             
             if (count($matches) > 1) {
@@ -54,26 +44,18 @@ class EmpleadoController extends Controller
                 return 'RFID' . str_pad($numero, 3, '0', STR_PAD_LEFT);
             }
             
-            return 'RFID001'; // Si el formato no coincide
+            return 'RFID001'; 
             
         } catch (\Exception $e) {
             Log::error('Error al calcular siguiente RFID: ' . $e->getMessage());
-            return 'RFID001'; // Valor por defecto
+            return 'RFID001'; 
         }
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $siguienteRFID = $this->calcularSiguienteRFID();
         return view('empleados.create', compact('siguienteRFID'));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -90,7 +72,6 @@ class EmpleadoController extends Controller
                 ->withInput()
                 ->with('error', 'Por favor corrige los errores del formulario');
         }
-
         try {
             DB::beginTransaction();
 
@@ -113,10 +94,6 @@ class EmpleadoController extends Controller
                 ->withInput();
         }
     }
-
-    /**
-     * Registrar primera asistencia automáticamente
-     */
     private function registrarPrimeraAsistencia($empleadoId)
     {
         try {
@@ -136,11 +113,6 @@ class EmpleadoController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-
-    // En el método show() del controlador
 public function show($id)
 {
     try {
@@ -177,10 +149,6 @@ public function show($id)
             ->with('error', 'Empleado no encontrado: ' . $e->getMessage());
     }
 }
-
-    /**
-     * Obtener estadísticas mensuales del empleado - CORREGIDO PARA USAR 'fecha'
-     */
     private function obtenerEstadisticasMensuales($empleadoId)
     {
         return AsistenciaEmpleado::select(
@@ -196,10 +164,6 @@ public function show($id)
         ->orderBy('month', 'desc')
         ->get();
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
         try {
@@ -211,10 +175,6 @@ public function show($id)
                 ->with('error', 'Empleado no encontrado');
         }
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
@@ -251,10 +211,6 @@ public function show($id)
                 ->withInput();
         }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         try {
@@ -282,10 +238,6 @@ public function show($id)
                 ->with('error', 'Error al eliminar el empleado: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Método para buscar empleado por RFID (para API)
-     */
     public function buscarPorRFID(Request $request)
     {
         $request->validate([
@@ -321,10 +273,6 @@ public function show($id)
             ], 500);
         }
     }
-
-    /**
-     * Método para obtener reporte de asistencias por rango de fechas - CORREGIDO
-     */
     public function reporteAsistencias($id, Request $request)
     {
         try {
@@ -356,10 +304,6 @@ public function show($id)
             ], 500);
         }
     }
-
-    /**
-     * Método para dashboard/resumen del sistema - CORREGIDO
-     */
     public function dashboard()
     {
         try {
