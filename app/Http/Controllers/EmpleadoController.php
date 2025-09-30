@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Models\Empleado;
 use App\Models\AsistenciaEmpleado;
 use Illuminate\Http\Request;
@@ -12,7 +10,6 @@ use Carbon\Carbon;
 
 class EmpleadoController extends Controller
 {
-   
     public function index()
     {
         try {
@@ -33,19 +30,15 @@ class EmpleadoController extends Controller
             $ultimoEmpleado = Empleado::orderBy('id', 'desc')->first();
             
             if (!$ultimoEmpleado || !$ultimoEmpleado->id_rfid) {
-                return 'RFID001'; // Primer empleado
+                return 'RFID001'; 
             }
-            
- 
             preg_match('/RFID(\d+)/', $ultimoEmpleado->id_rfid, $matches);
             
             if (count($matches) > 1) {
                 $numero = intval($matches[1]) + 1;
                 return 'RFID' . str_pad($numero, 3, '0', STR_PAD_LEFT);
             }
-            
             return 'RFID001'; 
-            
         } catch (\Exception $e) {
             Log::error('Error al calcular siguiente RFID: ' . $e->getMessage());
             return 'RFID001'; 
@@ -76,8 +69,6 @@ class EmpleadoController extends Controller
             DB::beginTransaction();
 
             $empleado = Empleado::create($request->only('nombre', 'id_rfid'));
-
-            // Registrar automáticamente la primera asistencia (opcional)
             $this->registrarPrimeraAsistencia($empleado->id);
 
             DB::commit();
@@ -103,7 +94,7 @@ class EmpleadoController extends Controller
                 'id_empleado' => $empleadoId,
                 'estado' => 'presente',
                 'hash_blockchain' => $hashBlockchain,
-                'fecha' => now(), // USANDO EL CAMPO CORRECTO
+                'fecha' => now(),
             ]);
             
             Log::info('Asistencia inicial registrada para empleado ID: ' . $empleadoId);
@@ -117,20 +108,14 @@ public function show($id)
 {
     try {
         $empleado = Empleado::findOrFail($id);
-        
-        // Obtener las asistencias del empleado ordenadas por fecha
         $asistencias = AsistenciaEmpleado::where('id_empleado', $id)
             ->orderBy('fecha', 'desc')
             ->paginate(10);
-            
-        // Calcular estadísticas generales
         $totalAsistencias = AsistenciaEmpleado::where('id_empleado', $id)->count();
         $asistenciasPresente = AsistenciaEmpleado::where('id_empleado', $id)
             ->where('estado', 'presente')->count();
         $asistenciasAusente = AsistenciaEmpleado::where('id_empleado', $id)
             ->where('estado', 'ausente')->count();
-        
-        // Porcentaje de asistencia
         $porcentajeAsistencia = $totalAsistencias > 0 ? 
             round(($asistenciasPresente / $totalAsistencias) * 100, 2) : 0;
 
@@ -152,8 +137,8 @@ public function show($id)
     private function obtenerEstadisticasMensuales($empleadoId)
     {
         return AsistenciaEmpleado::select(
-            DB::raw('YEAR(fecha) as year'), // CAMBIO AQUÍ
-            DB::raw('MONTH(fecha) as month'), // CAMBIO AQUÍ
+            DB::raw('YEAR(fecha) as year'), 
+            DB::raw('MONTH(fecha) as month'),
             DB::raw('COUNT(*) as total'),
             DB::raw('SUM(CASE WHEN estado = "presente" THEN 1 ELSE 0 END) as presentes'),
             DB::raw('SUM(CASE WHEN estado = "ausente" THEN 1 ELSE 0 END) as ausentes')
@@ -219,18 +204,12 @@ public function show($id)
             $empleado = Empleado::findOrFail($id);
             $nombre = $empleado->nombre;
             $rfid = $empleado->id_rfid;
-            
-            // Eliminar también las asistencias relacionadas
             AsistenciaEmpleado::where('id_empleado', $id)->delete();
-            
             $empleado->delete();
-
             DB::commit();
-
             Log::info('Empleado eliminado: ' . $nombre . ' - RFID: ' . $rfid);
             return redirect()->route('empleados.index')
                 ->with('success', 'Empleado y sus registros de asistencia eliminados correctamente');
-                
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al eliminar empleado: ' . $e->getMessage());
@@ -243,7 +222,6 @@ public function show($id)
         $request->validate([
             'rfid' => 'required|string|max:255'
         ]);
-
         try {
             $empleado = Empleado::where('id_rfid', $request->rfid)->first();
 
@@ -253,10 +231,8 @@ public function show($id)
                     'message' => 'Empleado no encontrado'
                 ], 404);
             }
-
-            // Obtener última asistencia - USANDO EL CAMPO 'fecha'
             $ultimaAsistencia = AsistenciaEmpleado::where('id_empleado', $empleado->id)
-                ->orderBy('fecha', 'desc') // CAMBIO AQUÍ
+                ->orderBy('fecha', 'desc')
                 ->first();
 
             return response()->json([
@@ -282,8 +258,8 @@ public function show($id)
             $fechaFin = $request->input('fecha_fin', Carbon::now()->format('Y-m-d'));
             
             $asistencias = AsistenciaEmpleado::where('id_empleado', $id)
-                ->whereBetween('fecha', [$fechaInicio, $fechaFin]) // CAMBIO AQUÍ
-                ->orderBy('fecha', 'desc') // CAMBIO AQUÍ
+                ->whereBetween('fecha', [$fechaInicio, $fechaFin])
+                ->orderBy('fecha', 'desc') 
                 ->get();
                 
             return response()->json([
@@ -308,12 +284,11 @@ public function show($id)
     {
         try {
             $totalEmpleados = Empleado::count();
-            $totalAsistenciasHoy = AsistenciaEmpleado::whereDate('fecha', Carbon::today())->count(); // CORREGIDO
-            $totalAsistenciasMes = AsistenciaEmpleado::whereMonth('fecha', Carbon::now()->month)->count(); // CORREGIDO
-            
+            $totalAsistenciasHoy = AsistenciaEmpleado::whereDate('fecha', Carbon::today())->count();
+            $totalAsistenciasMes = AsistenciaEmpleado::whereMonth('fecha', Carbon::now()->month)->count();
             $empleadosRecientes = Empleado::orderBy('created_at', 'desc')->take(5)->get();
             $asistenciasRecientes = AsistenciaEmpleado::with('empleado')
-                ->orderBy('fecha', 'desc') // CORREGIDO
+                ->orderBy('fecha', 'desc')
                 ->take(10)
                 ->get();
                 

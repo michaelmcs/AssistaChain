@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Gestión de Empleados')
-
 @section('content')
 <div class="card">
     <div class="card-header bg-primary text-white">
@@ -56,13 +54,10 @@
                         </td>
                         <td>
                             <div class="btn-group" role="group">
-                                <!-- Botón para ver detalles -->
                                 <a href="{{ route('empleados.show', $empleado->id) }}" 
                                    class="btn btn-info btn-sm" title="Ver detalles">
                                     <i class="bi bi-eye"></i> Ver
                                 </a>
-                                
-                                <!-- Botón para marcar como AUSENTE -->
                                 <form action="{{ route('empleados.marcar-ausente', $empleado->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     <button type="submit" class="btn btn-warning btn-sm" 
@@ -71,8 +66,6 @@
                                         <i class="bi bi-x-circle"></i> Ausente
                                     </button>
                                 </form>
-
-                                <!-- Botones de editar y eliminar con modales -->
                                 <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editEmployeeModal{{ $empleado->id }}">
                                     <i class="bi bi-pencil"></i> Editar
                                 </button>
@@ -124,8 +117,6 @@
         </form>
     </div>
 </div>
-
-<!-- Modal para Editar Empleado -->
 @foreach($empleados as $empleado)
 <div class="modal fade" id="editEmployeeModal{{ $empleado->id }}" tabindex="-1" aria-labelledby="editEmployeeModalLabel{{ $empleado->id }}" aria-hidden="true">
     <div class="modal-dialog">
@@ -155,8 +146,6 @@
         </form>
     </div>
 </div>
-
-<!-- Modal para Eliminar Empleado -->
 <div class="modal fade" id="deleteEmployeeModal{{ $empleado->id }}" tabindex="-1" aria-labelledby="deleteEmployeeModalLabel{{ $empleado->id }}" aria-hidden="true">
     <div class="modal-dialog">
         <form action="{{ route('empleados.destroy', $empleado->id) }}" method="POST">

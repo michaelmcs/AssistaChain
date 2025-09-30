@@ -1,8 +1,5 @@
 <?php
-
-
 namespace App\Services;
-
 use Web3\Web3;
 use Web3\Contract;
 use Web3\Providers\HttpProvider;
@@ -11,7 +8,6 @@ use Web3p\EthereumTx\Transaction;
 use kornrunner\Keccak;
 use Elliptic\EC;
 use Exception;
-
 class EthereumService
 {
     protected Web3 $web3;

@@ -1,7 +1,5 @@
 @extends('layouts.app')
-
 @section('title', 'Listado de Asistencias')
-
 @section('content')
 <div class="card">
     <div class="card-header bg-info text-white">

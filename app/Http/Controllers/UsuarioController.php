@@ -15,10 +15,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Cambiar 'username' por 'nombre_usuario' en las credenciales
         $credentials = $request->only('username', 'password');
-
-        // Intentar autenticar usando el campo correcto
         if (Auth::attempt(['nombre_usuario' => $credentials['username'], 'password' => $credentials['password']])) {
             return redirect()->intended('/dashboard');
         }

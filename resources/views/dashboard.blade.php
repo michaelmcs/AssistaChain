@@ -1,12 +1,10 @@
 @extends('layouts.app')
-
 @section('content')
     @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
     @endif
-
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -18,7 +16,6 @@
                         <h5>¡Bienvenido, {{ session('user_name') }}!</h5>
                         <p class="mb-0">Sistema de gestión de asistencia con blockchain</p>
                     </div>
-
                     <div class="row mt-4">
                         <div class="col-md-4">
                             <div class="card text-center">
@@ -29,7 +26,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="col-md-4">
                             <div class="card text-center">
                                 <div class="card-body">
@@ -39,7 +35,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="col-md-4">
                             <div class="card text-center">
                                 <div class="card-body">

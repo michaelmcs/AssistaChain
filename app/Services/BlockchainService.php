@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Services;
-
 use App\Models\AsistenciaEmpleado;
 use App\Models\Configuracion;
 use Illuminate\Support\Facades\Log;
@@ -30,7 +28,6 @@ class BlockchainService
     {
         Configuracion::set('last_block_hash', $hash);
     }
-
     public function verifyChainIntegrity(): array
     {
         try {
@@ -44,7 +41,6 @@ class BlockchainService
                 'invalid_blocks' => 0,
                 'blocks' => []
             ];
-
             $previousHash = 'GENESIS';
 
             foreach ($blocks as $block) {
@@ -54,9 +50,7 @@ class BlockchainService
                 } else {
                     $fechaString = (string) $fecha;
                 }
-
                 $currentHash = $block->hash_blockchain;
-                
                 $expectedHash = $this->computeAttendanceHash([
                     'id_empleado' => $block->id_empleado,
                     'nombre' => $block->empleado->nombre ?? 'Unknown',

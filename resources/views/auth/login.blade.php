@@ -151,7 +151,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Auto-eliminar alerts después de 5 segundos
         setTimeout(function() {
             document.querySelectorAll('.alert').forEach(alert => {
                 new bootstrap.Alert(alert).close();

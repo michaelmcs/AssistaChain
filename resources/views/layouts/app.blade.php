@@ -42,7 +42,6 @@
             <a class="navbar-brand" href="{{ route('dashboard') }}">
                 <i class="bi bi-shield-lock-fill me-2"></i>AssistaChain
             </a>
-            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -70,7 +69,6 @@
                         </a>
                     </li>
                 </ul>
-                
                 <div class="d-flex align-items-center">
                     <span class="text-light me-3">
                         <i class="bi bi-person-circle me-1"></i>{{ session('user_name') }}
@@ -86,7 +84,6 @@
         </div>
     </nav>
     @endif
-
     <main class="container py-4 flex-grow-1">
         @yield('content')
     </main>
@@ -94,14 +91,12 @@
     <footer class="mt-auto py-3 bg-dark text-light text-center">
         <div class="container">
             <small>
-                AssistaChain © 2025 - Sistema protegido por derechos de autor<br>
-                Prohibida la reproducción total o parcial sin autorización
+                AssistaChain © 2025<br>
+
             </small>
         </div>
     </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {

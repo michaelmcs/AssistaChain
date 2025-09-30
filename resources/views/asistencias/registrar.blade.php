@@ -1,14 +1,11 @@
 @extends('layouts.app')
-
 @section('title', 'Registrar Asistencia')
-
 @section('content')
 <div class="card">
     <div class="card-header bg-success text-white">
         <h5 class="mb-0">Registrar Asistencia</h5>
     </div>
     <div class="card-body">
-        <!-- Mensajes de éxito -->
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show">
                 {{ session('success') }}
@@ -16,7 +13,6 @@
             </div>
         @endif
 
-        <!-- Mensajes de error -->
         @if(session('error'))
             <div class="alert alert-danger alert-dismissible fade show">
                 {{ session('error') }}
@@ -24,7 +20,6 @@
             </div>
         @endif
 
-        <!-- Mostrar errores de validación -->
         @if($errors->any())
             <div class="alert alert-danger alert-dismissible fade show">
                 <ul class="mb-0">
@@ -36,7 +31,6 @@
             </div>
         @endif
 
-        <!-- Información de diagnóstico -->
         <div class="alert alert-info">
             <strong>Ruta actual:</strong> {{ Route::currentRouteName() }}<br>
             <strong>Action del formulario:</strong> {{ route('registrar.asistencia') }}
@@ -69,7 +63,6 @@
     </div>
 </div>
 
-<!-- Modal para la cámara -->
 <div class="modal fade" id="modalCamara" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -89,36 +82,27 @@
 @endsection
 
 @section('scripts')
-<!-- Incluir Html5QrcodeScanner -->
 <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
 
 <script>
-// Función para iniciar la cámara
 function iniciarCamara() {
     $('#modalCamara').modal('show');
     
-    // Esperar a que el modal se muestre completamente
-    setTimeout(() => {
+     setTimeout(() => {
         const scanner = new Html5QrcodeScanner("lector", { 
             fps: 10, 
             qrbox: { width: 250, height: 250 } 
         });
 
         scanner.render((decodedText, decodedResult) => {
-            // Cuando se escanea un código, llenar el campo y cerrar el modal
             $('#rfid').val(decodedText);
             $('#modalCamara').modal('hide');
             scanner.clear();
-            
-            // Opcional: enviar automáticamente el formulario
-            // $('#formAsistencia').submit();
         }, (error) => {
-            // console.log('Error al escanear:', error);
         });
     }, 500);
 }
 
-// Cerrar el scanner cuando se cierra el modal
 $('#modalCamara').on('hidden.bs.modal', function () {
     const scannerElement = document.getElementById('lector');
     if (scannerElement) {
@@ -126,12 +110,10 @@ $('#modalCamara').on('hidden.bs.modal', function () {
     }
 });
 
-// Enfocar automáticamente el campo RFID
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('rfid').focus();
 });
 
-// Prevenir envío múltiple del formulario
 document.getElementById('formAsistencia').addEventListener('submit', function(e) {
     const btn = this.querySelector('button[type="submit"]');
     btn.disabled = true;
